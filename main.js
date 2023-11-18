@@ -13,61 +13,51 @@ console.log(resetButton);
 
 //開始時間
 
-let startTime = 0;
-let running = false;
-let timerInterval = undefined;
-let currentTime = "";
-let calcTime = 0;
+let startTime;
+
+//停止時間
+
+let stopTime = 0;
+
+// タイムアウトID
+let timeoutID;
 
 //スタートボタンの設定
 
-const displayTimer = () => {
-  timerInterval = window.setInterval(() => {
+function displayTime() {
+  const currentTime = new Date(Date.now() - startTime + stopTime);
+  const h = String(currentTime.getHours()-1).padStart(2, '0');
+  const m = String(currentTime.getMinutes()).padStart(2, '0');
+  const s = String(currentTime.getSeconds()).padStart(2, '0');
+  const ms = String(currentTime.getMilliseconds()).padStart(3, '0');
 
-    // 現在の時間からスタートした時間をマイナスする
-    calcTime = Date.now() - startTime;
-
-    // タイムスタンプを時間に変換します
-    const currentTime = new Date(calcTime);
-    const h = String(currentTime.getHours() - 9).padStart(2, "0");
-    const m = String(currentTime.getMinutes()).padStart(2, "0");
-    const s = String(currentTime.getSeconds()).padStart(2, "0");
-    // const ms = String(currentTime.getMilliseconds()).padStart(3, "0");
-
-    // time.textContent = `${h}:${m}:${s}:${ms}`;
-    time.textContent = `${h}:${m}:${s}`;
-    //　ミリ秒表示の場合、10
-    // 秒表示の場合 1000
-  }, 1000);
+  time.textContent = `${h}:${m}:${s}.${ms}`;
+  timeoutID = setTimeout(displayTime, 1);
 }
 
-// スタートボタンクリック（イベント）
-onClickStart.addEventListener('click', function(){
-  startTime = Date.now()　- calcTime;
-  displayTimer();
- // ボタンの状態
-  onClickStart.disabled = true;
-  onClickStop.disabled = false;
-  onClickReset.disabled = false;
-})
+// スタート設定
+startButton.addEventListener('click', () => {
+  startButton.disabled = true;
+  stopButton.disabled = false;
+  resetButton.disabled = true;
+  startTime = Date.now();
+  displayTime();
+});
 
-// ストップボタンクリック（イベント）
-onClickStop.addEventListener('click', function(){
-  window.clearInterval(timerInterval);
- // ボタンの状態
-  onClickStart.disabled = false;
-  onClickStop.disabled = true;
-  onClickReset.disabled = false;
-})
+//ストップ
+stopButton.addEventListener('click', function() {
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  resetButton.disabled = false;
+  clearTimeout(timeoutID);
+  stopTime += (Date.now() - startTime);
+});
 
-// リセットボタンクリック（イベント）
-onClickReset.addEventListener('click', function(){
-calcTime = 0;
-time.textContent = "00:00:00";
-onClickStart.disabled = false;
-window.clearInterval(timerInterval);
-// ボタンの状態
-onClickStart.disabled = false;
-onClickStop.disabled = true;
-onClickReset.disabled = true;
-})
+//リセット
+resetButton.addEventListener('click', function() {
+  startButton.disabled = false;
+  stopButton.disabled = true;
+  resetButton.disabled = true;
+  time.textContent = '00:00:00.000';
+  stopTime = 0;
+});
