@@ -32,7 +32,7 @@ function displayTime() {
   const ms = String(currentTime.getMilliseconds()).padStart(3, '0');
 
   time.textContent = `${h}:${m}:${s}.${ms}`;
-  timeoutID = setTimeout(displayTime, 1);
+  timeoutID = setTimeout(displayTime, 10);
 }
 
 // スタート設定
@@ -43,6 +43,7 @@ startButton.addEventListener('click', () => {
   startTime = Date.now();
   displayTime();
 });
+
 
 //ストップ
 stopButton.addEventListener('click', function() {
@@ -60,4 +61,5 @@ resetButton.addEventListener('click', function() {
   resetButton.disabled = true;
   time.textContent = '0:0:0:0';
   stopTime = 0;
+  
 });
